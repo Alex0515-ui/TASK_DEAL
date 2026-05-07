@@ -12,3 +12,4 @@ pwdlib[argon2,bcrypt]
 email-validator
 phonenumbers
 apscheduler
+websockets

@@ -1,13 +1,15 @@
 from fastapi import FastAPI
 from config.database import Base, engine
+from tasks import scheduler
+from contextlib import asynccontextmanager
+import logging
+
 import auth.authentication as authentication
 import Jobs.jobs as job
 import Job_responses.jobs_responses as job_responses
 import Deals.deals as deals
 import Reviews.reviews as reviews
-from tasks import scheduler
-from contextlib import asynccontextmanager
-import logging
+import Messages.messages as messages
 
 
 logging.basicConfig(level=logging.INFO)
@@ -34,6 +36,7 @@ app.include_router(job.router)
 app.include_router(job_responses.router)
 app.include_router(deals.router)
 app.include_router(reviews.router)
+app.include_router(messages.router)
 
 Base.metadata.create_all(bind=engine)
 

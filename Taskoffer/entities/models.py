@@ -1,4 +1,4 @@
-from sqlalchemy import func, ForeignKey, Enum as SQLEnum, DateTime, UniqueConstraint, CheckConstraint
+from sqlalchemy import func, ForeignKey, Enum as SQLEnum, DateTime, UniqueConstraint, CheckConstraint, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from enum import Enum
 from config.database import Base
@@ -20,7 +20,7 @@ class User(Base):
     password_hash : Mapped[str] = mapped_column(nullable=False)
     phone_number : Mapped[str] = mapped_column(unique=True, nullable=False)
 
-    created_at : Mapped[datetime] = mapped_column(server_default=func.now())
+    created_at : Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     role : Mapped[Role] = mapped_column(SQLEnum(Role), default=Role.CLIENT, nullable=False)
 
     wallet : Mapped["Wallet"] = relationship(back_populates="user", uselist=False)
@@ -102,9 +102,9 @@ class Job(Base):
 
     status : Mapped[Job_status] = mapped_column(SQLEnum(Job_status), default=Job_status.IN_SEARCH, index=True)
     type : Mapped[Job_type] = mapped_column(SQLEnum(Job_type), nullable=False)
-    created_at : Mapped[datetime] = mapped_column(server_default=func.now())
-    expires_at : Mapped[datetime] = mapped_column(nullable=False, index=True)
-    deadline : Mapped[datetime] = mapped_column(DateTime)
+    created_at : Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    expires_at : Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, index=True)
+    deadline : Mapped[datetime] = mapped_column(DateTime(timezone=True))
 
     responses : Mapped[list["JobResponse"]] = relationship("JobResponse", back_populates="job", cascade="all, delete-orphan")
     
@@ -123,7 +123,7 @@ class JobResponse(Base):
     offered_price : Mapped[int] = mapped_column(nullable=True)
     cover_letter : Mapped[str] = mapped_column(nullable=True)
     status : Mapped[Response_status] = mapped_column(SQLEnum(Response_status), default=Response_status.PENDING)
-    created_at : Mapped[datetime] = mapped_column(server_default=func.now())
+    created_at : Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     job : Mapped["Job"] = relationship("Job", back_populates="responses")
     worker : Mapped["User"] = relationship("User")
@@ -169,22 +169,22 @@ class Deal(Base):
     agreed_price : Mapped[int] = mapped_column(nullable=False)
 
     # Это сроки выполнения работы
-    deadline : Mapped[datetime] = mapped_column(nullable=False)
+    deadline : Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
 
     status : Mapped[DealStatus] = mapped_column(SQLEnum(DealStatus), default=DealStatus.NEGOTIATION)
 
     # Подписи 
-    worker_signed_at : Mapped[datetime] = mapped_column(DateTime, nullable=True)   
-    client_signed_at : Mapped[datetime] = mapped_column(DateTime, nullable=True)
+    worker_signed_at : Mapped[datetime] = mapped_column(DateTime(timezone=True),  nullable=True)   
+    client_signed_at : Mapped[datetime] = mapped_column(DateTime(timezone=True),  nullable=True)
     is_fully_signed : Mapped[bool] = mapped_column(default=False)
-    worker_completed_at : Mapped[datetime] = mapped_column(DateTime, nullable=True)
-    client_completed_at : Mapped[datetime] = mapped_column(DateTime, nullable=True)
+    worker_completed_at : Mapped[datetime] = mapped_column(DateTime(timezone=True),  nullable=True)
+    client_completed_at : Mapped[datetime] = mapped_column(DateTime(timezone=True),  nullable=True)
 
     # Времена
-    created_at : Mapped[datetime] = mapped_column(server_default=func.now())
-    started_at : Mapped[datetime] = mapped_column(nullable=True)
-    completed_at : Mapped[datetime] = mapped_column(nullable=True)
-    cancelled_at : Mapped[datetime] = mapped_column(nullable=True)
+    created_at : Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    started_at : Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=True)
+    completed_at : Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=True)
+    cancelled_at : Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=True)
 
     # Изменения
     cancel_reason : Mapped[str] = mapped_column(nullable=True)
@@ -201,7 +201,10 @@ class Deal(Base):
     )
 
     
+ # ========================== ТАБЛИЦА ОТЗЫВОВ ==============================
+ # ===========================================================================
 
+ # Сущность отзыва
 class Review(Base):
     __tablename__ = "reviews"
 
@@ -214,7 +217,7 @@ class Review(Base):
     rating : Mapped[int] = mapped_column(nullable=False)
     comment : Mapped[str] = mapped_column(nullable=True)
 
-    created_at : Mapped[datetime] = mapped_column(server_default=func.now())
+    created_at : Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     deal : Mapped["Deal"] = relationship("Deal", foreign_keys=[deal_id])
 
@@ -226,6 +229,21 @@ class Review(Base):
         CheckConstraint("rating >= 1 AND rating <= 5", name="check_rating_range"),
     )
 
+# Таблица сообщения в чате
+class Message(Base):
+    __tablename__ = "messages"
 
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+
+    sender_id : Mapped[int] = mapped_column(ForeignKey("users.id"))
+    deal_id : Mapped[int] = mapped_column(ForeignKey("deals.id"), index=True)
+
+    text : Mapped[str] = mapped_column(Text, nullable=False)
+
+    read_at : Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=True) 
+    created_at : Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+    sender : Mapped["User"] = relationship("User", foreign_keys=[sender_id])
+    deal : Mapped["Deal"] = relationship("Deal", foreign_keys=[deal_id])
 
 
