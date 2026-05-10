@@ -221,8 +221,8 @@ class Review(Base):
 
     deal : Mapped["Deal"] = relationship("Deal", foreign_keys=[deal_id])
 
-    from_user : Mapped["User"] = relationship("User", foreign_keys=[from_user_id])
-    to_user : Mapped["User"] = relationship("User", foreign_keys=[to_user_id])
+    from_user : Mapped["User"] = relationship("User", foreign_keys=[from_user_id], overlaps="given_reviews")
+    to_user : Mapped["User"] = relationship("User", foreign_keys=[to_user_id], overlaps="received_reviews")
 
     __table_args__ = (
         UniqueConstraint("deal_id", "from_user_id", name="uniq_review_user"),
