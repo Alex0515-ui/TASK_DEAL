@@ -4,6 +4,8 @@ from entities.models import *
 from Job_responses.job_response_schema import CreateJobResponseSchema
 from sqlalchemy import select
 from Deals.deals_service import DealService
+from Notifications.notification_service import create_notification
+
 
 class JobResponseService:
 
@@ -26,6 +28,14 @@ class JobResponseService:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Вы уже оставляли заявку на эту работу')
         
         job_response = JobResponse(**data.model_dump(), worker_id=worker_id)
+
+        create_notification(
+            user_id=job.owner_id,
+            text=f"Вам пришла заявка по работе '{job.title}'",
+            type=NotificationType.JOB,
+            db=db,
+            related_id=job.id
+        )
 
         db.add(job_response)
         db.commit()
@@ -58,11 +68,33 @@ class JobResponseService:
             job.status = Job_status.ACCEPTED
             response.status = Response_status.ACCEPTED
 
+        
+            other_candidates = db.execute(
+                select(JobResponse.worker_id)
+                .where(JobResponse.job_id == job.id, JobResponse.id != response.id)).all()
+            
             # Отклоняем других кандидатов
             db.query(JobResponse).filter(
                 JobResponse.job_id == job.id, 
                 JobResponse.id != response.id
             ).update({"status": Response_status.REJECTED})
+
+            for (worker_id, ) in other_candidates:
+                create_notification(
+                    user_id=worker_id,
+                    text=f"Ваша заявка по работе '{job.title}' к сожалению была отклонена",
+                    type=NotificationType.JOB,
+                    db=db,
+                    related_id=job.id
+                )
+            
+            create_notification(
+                user_id=response.worker_id,
+                text=f"Поздравляю!\nВаша заявка по работе '{job.title}' была принята",
+                type=NotificationType.JOB,
+                db=db,
+                related_id=job.id
+            )
 
             DealService.createDeal(job=job, job_response=response, db=db)
 
@@ -149,6 +181,15 @@ class JobResponseService:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Работа уже отменена')
         
         response.status = Response_status.REJECTED
+
+        create_notification(
+            user_id=response.worker_id,
+            text=f"Ваша заявка по работе '{job.title}' к сожалению была отклонена",
+            type=NotificationType.JOB,
+            db=db,
+            related_id=job.id
+        )
+
         db.commit()
 
         return {"message": "Заявка успешно отклонена"}

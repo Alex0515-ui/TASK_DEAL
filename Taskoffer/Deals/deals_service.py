@@ -4,7 +4,7 @@ from entities.models import *
 from Deals.deal_schemas import ChangeDealSchema, CancelDealSchema
 from sqlalchemy import select
 from datetime import datetime, timezone
-
+from Notifications.notification_service import create_notification
 
 class DealService:
 
@@ -44,7 +44,21 @@ class DealService:
         else:
             deal.agreed_price = job.price
         
+        create_notification(
+            user_id=deal.client_id, 
+            text=f"Создан договор по работе '{job.title}', пожалуйста ознакомьтесь", 
+            db=db,
+            type=NotificationType.JOB,
+            related_id=job.id
+        )
 
+        create_notification(
+            user_id=deal.worker_id, 
+            text=f"Создан договор по работе '{job.title}', пожалуйста ознакомьтесь", 
+            db=db,
+            type=NotificationType.JOB,
+            related_id=job.id
+        )
         db.add(deal)
         db.commit()
         return deal
@@ -101,6 +115,14 @@ class DealService:
             deal.status = DealStatus.NEGOTIATION
             deal.started_at = None
         
+        create_notification(
+            user_id=deal.worker_id, 
+            text=f"Был изменен договор по работе '{deal.job.title}'\nПожалуйста ознакомьтесь", 
+            db=db,
+            type=NotificationType.JOB,
+            related_id=deal.job.id
+        )
+
         db.commit()
         return {"message": "Сделка успешно обновлена! Подпишите ее с обеих сторон!"}
     
@@ -127,6 +149,13 @@ class DealService:
             
             deal.client_signed_at = now
             message = "Сделка успешно подписана! Осталось подписать работнику, для начала работы"
+            create_notification(
+                user_id=deal.worker_id, 
+                text=f"Клиент подписал договор по работе '{deal.job.title}'\nТеперь нужна подпись с вашей стороны для начала работы",
+                type=NotificationType.JOB,
+                db=db,
+                related_id=deal.job.id
+            )
         
         elif user_id == deal.worker_id:
             if deal.worker_signed_at:
@@ -134,6 +163,13 @@ class DealService:
             
             deal.worker_signed_at = now
             message = "Сделка успешно подписана! Осталось подписать клиенту, для начала работы"
+            create_notification(
+                user_id=deal.client_id, 
+                text=f"Работник подписал договор по работе '{deal.job.title}'\nТеперь нужна подпись с вашей стороны для начала работы",
+                type=NotificationType.JOB,
+                db=db,
+                related_id=deal.job.id
+            )
         
         if deal.client_signed_at and deal.worker_signed_at:
             deal.status = DealStatus.ACTIVE
@@ -166,6 +202,13 @@ class DealService:
             
             deal.client_completed_at = now
             message = "Сделка успешно подписана! Для завершения осталось подписать работнику"
+            create_notification(
+                user_id=deal.worker_id, 
+                text=f"Клиент подписал договор по работе '{deal.job.title}'\nТеперь нужна подпись с вашей стороны для завершения работы",
+                type=NotificationType.JOB,
+                db=db,
+                related_id=deal.job.id
+            )
         
         elif user_id == deal.worker_id:
             if deal.worker_completed_at:
@@ -173,6 +216,13 @@ class DealService:
             
             deal.worker_completed_at = now
             message = "Сделка успешно подписана! Для завершения осталось подписать клиенту"
+            create_notification(
+                user_id=deal.client_id, 
+                text=f"Работник подписал договор по работе '{deal.job.title}'\nТеперь нужна подпись с вашей стороны для завершения работы",
+                type=NotificationType.JOB,
+                db=db,
+                related_id=deal.job.id
+            )
         
         if deal.client_completed_at and deal.worker_completed_at:
             deal.status = DealStatus.COMPLETED
@@ -204,6 +254,15 @@ class DealService:
         deal.last_action_by = user_id
         deal.status = DealStatus.CANCELLED
         deal.cancelled_at = datetime.now(timezone.utc)
+
+        other_user_id = deal.worker_id if user_id == deal.client_id else deal.client_id
+        create_notification(
+            user_id=other_user_id, 
+            text=f"Договор по работе '{deal.job.title}' был отменен",
+            type=NotificationType.JOB,
+            db=db,
+            related_id=deal.job.id
+        )
 
         db.commit()
 

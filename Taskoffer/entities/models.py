@@ -247,3 +247,25 @@ class Message(Base):
     deal : Mapped["Deal"] = relationship("Deal", foreign_keys=[deal_id])
 
 
+# С чем связано уведомление (Чат или работа)
+class NotificationType(Enum):
+    CHAT = "CHAT"
+    JOB = "JOB"
+
+# Уведомления в платформе
+class Notification(Base):
+    __tablename__ = "notifications"
+
+    id : Mapped[int] = mapped_column(primary_key=True, index=True)
+    user_id : Mapped[int] = mapped_column(ForeignKey("users.id"), index=True)
+
+    text: Mapped[str] = mapped_column(Text, nullable=False)
+
+    type : Mapped[NotificationType] = mapped_column(SQLEnum(NotificationType))
+
+    related_id: Mapped[int] = mapped_column(nullable=True)
+
+    is_read: Mapped[bool] = mapped_column(default=False, index=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+    user : Mapped["User"] = relationship("User", foreign_keys=[user_id])

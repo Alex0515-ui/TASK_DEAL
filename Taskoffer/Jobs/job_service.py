@@ -2,6 +2,8 @@ from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 from entities.models import *
 from Jobs.job_schemas import CreateJobSchema
+from Notifications.notification_service import create_notification
+
 
 class JobService:
 
@@ -72,6 +74,15 @@ class JobService:
         job = db.query(Job).filter(Job.id==job_id, Job.owner_id == owner_id).first()
         if not job:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Задача не найдена или вы не являетесь ее владельцом')
+        
+        if job.worker_id is not None:
+            create_notification(
+                user_id=job.worker_id,
+                text=f"Работа '{job.title}' была отменена со стороны клиента",
+                type=NotificationType.JOB,
+                db=db,
+                related_id=job.id
+            )
         
         job.status = Job_status.CANCELLED
         job.worker_id = None

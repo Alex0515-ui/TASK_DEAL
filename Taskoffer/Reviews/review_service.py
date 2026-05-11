@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from Reviews.review_schema import CreateReviewSchema
 from entities.models import *
 from datetime import datetime, timezone, timedelta
-
+from Notifications.notification_service import create_notification
 
 class ReviewService:
 
@@ -93,8 +93,16 @@ class ReviewService:
             existing.rating = data.rating
             existing.comment = data.comment
 
+            create_notification(
+                user_id=to_user_id,
+                text=f"Был изменен отзыв о вас по работе '{deal.job.title}'",
+                type=NotificationType.JOB,
+                db=db,
+                related_id=existing.id
+            )
 
             ReviewService.rate_user(to_user_id=to_user_id, db=db)
+
 
             db.commit()
             db.refresh(existing)
@@ -109,11 +117,19 @@ class ReviewService:
             rating = data.rating, 
             comment = data.comment
         )
+        
         db.add(review)
         db.flush()   # Чтобы изменения уходили в БД без коммита даже
 
-        ReviewService.rate_user(to_user_id=to_user_id, db=db)
+        create_notification(
+            user_id=to_user_id,
+            text=f"Вы получили отзыв по работе '{deal.job.title}'",
+            type=NotificationType.JOB,
+            db=db,
+            related_id=review.id
+        )
 
+        ReviewService.rate_user(to_user_id=to_user_id, db=db)
         
         db.commit()
         

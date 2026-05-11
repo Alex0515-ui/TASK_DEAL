@@ -11,6 +11,7 @@ import Deals.deals as deals
 import Reviews.reviews as reviews
 import Messages.messages as messages
 import WebSocket.websocket as websocket
+import Notifications.notifications as nots
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -38,6 +39,7 @@ app.include_router(deals.router)
 app.include_router(reviews.router)
 app.include_router(messages.router)
 app.include_router(websocket.router)
+app.include_router(nots.router)
 
 Base.metadata.create_all(bind=engine)
 
