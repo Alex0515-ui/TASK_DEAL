@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from entities.models import *
 from Jobs.job_schemas import CreateJobSchema
 from Notifications.notification_service import create_notification
+from Payment.payment_service import process_job_payment, DealPaymentAction
 
 
 class JobService:
@@ -11,7 +12,14 @@ class JobService:
     @staticmethod
     def create_job(job_data: CreateJobSchema,  owner_id: int, db: Session):
         job = Job(**job_data.model_dump(), owner_id = owner_id)
-        
+
+        process_job_payment(
+            action=DealPaymentAction.START_JOB, 
+            amount=job_data.price, 
+            db=db, 
+            client_id=owner_id
+        )
+
         db.add(job)
         db.commit()
         db.refresh(job)
@@ -86,6 +94,14 @@ class JobService:
         
         job.status = Job_status.CANCELLED
         job.worker_id = None
+
+        process_job_payment(
+            action=DealPaymentAction.JOB_CANCEL, 
+            amount=job.price, 
+            db=db, 
+            client_id=job.owner_id
+        )
+
         db.commit()
         return job
 

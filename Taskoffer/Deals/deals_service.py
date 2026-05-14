@@ -5,6 +5,8 @@ from Deals.deal_schemas import ChangeDealSchema, CancelDealSchema
 from sqlalchemy import select
 from datetime import datetime, timezone
 from Notifications.notification_service import create_notification
+from Payment.payment_service import process_job_payment, DealPaymentAction
+
 
 class DealService:
 
@@ -59,6 +61,7 @@ class DealService:
             type=NotificationType.JOB,
             related_id=job.id
         )
+
         db.add(deal)
         db.commit()
         return deal
@@ -98,6 +101,27 @@ class DealService:
         deal_changed = False
 
         if data.agreed_price is not None and data.agreed_price != deal.agreed_price:
+            if data.agreed_price > deal.agreed_price:
+                price_difference = data.agreed_price - deal.agreed_price
+
+                client_wallet = db.execute(select(Wallet).where(Wallet.user_id == deal.client_id).with_for_update()).scalar_one_or_none()
+
+                if not client_wallet:
+                    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Кошелек не найден')
+                
+                if client_wallet.balance < price_difference:
+                    raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=f'Для изменения сделки, в кошельке должна быть сумма: {price_difference}')
+                
+                client_wallet.balance -= price_difference
+
+                transaction = Transaction(
+                    type=TransactionType.HOLD,
+                    wallet_id=client_wallet.id,
+                    deal_id=deal.id,
+                    amount=price_difference
+                )
+                db.add(transaction)
+
             deal.agreed_price = data.agreed_price
             deal_changed = True
 
@@ -228,6 +252,7 @@ class DealService:
             deal.status = DealStatus.COMPLETED
             deal.completed_at = now
             message = "Сделка успешно завершена с обеих сторон!"
+            process_job_payment(action=DealPaymentAction.COMPLETE_DEAL, amount=deal.agreed_price, db=db, deal_id=deal.id, client_id=deal.client_id, worker_id=deal.worker_id)
 
         db.commit()
         return {"message": message}
@@ -262,6 +287,15 @@ class DealService:
             type=NotificationType.JOB,
             db=db,
             related_id=deal.job.id
+        )
+
+        process_job_payment(
+            action=DealPaymentAction.DEAL_CANCEL, 
+            amount=deal.agreed_price, 
+            db=db, 
+            deal_id=deal.id, 
+            client_id=deal.client_id, 
+            worker_id=deal.worker_id
         )
 
         db.commit()

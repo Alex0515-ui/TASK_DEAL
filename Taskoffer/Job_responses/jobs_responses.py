@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from auth.authentication import db_dependency, user_dependency
-from Job_responses.job_response_schema import CreateJobResponseSchema
+from Job_responses.job_response_schema import CreateJobResponseSchema, DeleteJobResponseSchema
 from Job_responses.job_responses_service import JobResponseService
 from entities.models import *
 
@@ -66,5 +66,11 @@ def get_response(id: int, db: db_dependency, user: user_dependency):
 @router.patch("/job/response/{id}")
 def reject_job_response(id: int, db: db_dependency, user: user_dependency):
     return JobResponseService.reject_response(db=db, response_id=id, client_id=user['id'])
+
+
+@router.delete("/delete/{response_id}")
+def delete_job_response(response_id: int, data: DeleteJobResponseSchema,db: db_dependency, user: user_dependency):
+    return JobResponseService.delete_response(db=db, response_id=response_id, worker_id=user['id'], job_id=data.job_id)
+
 
 

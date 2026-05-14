@@ -64,6 +64,33 @@ class JobResponseService:
             if job.worker_id is not None:
                 raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Работник уже найден')
             
+            # Если цена другая
+            if response.offered_price:
+                client_wallet = db.execute(select(Wallet).where(Wallet.user_id == client_id).with_for_update()).scalar_one_or_none()
+
+                if response.offered_price > job.price:
+
+                    price_difference = response.offered_price - job.price
+                    
+                    
+                    if client_wallet.balance < price_difference:
+                        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Сумма разницы между ценой и работой нету в вашем кошельке')
+                    
+                    client_wallet.balance -= price_difference
+                    transaction = Transaction(type=TransactionType.HOLD, wallet_id=client_wallet.id, amount=price_difference)
+                
+                    db.add(transaction)
+                
+                elif response.offered_price < job.price:
+                    refund = job.price - response.offered_price
+
+                    client_wallet.balance += refund
+
+                    transaction = Transaction(type=TransactionType.REFUND, wallet_id=client_wallet.id, amount=refund)
+
+                    db.add(transaction)
+
+
             job.worker_id = response.worker_id
             job.status = Job_status.ACCEPTED
             response.status = Response_status.ACCEPTED
@@ -193,6 +220,25 @@ class JobResponseService:
         db.commit()
 
         return {"message": "Заявка успешно отклонена"}
+    
+    # Отозвать заявку
+    @staticmethod
+    def delete_response(db: Session, response_id: int, worker_id: int, job_id: int):
+        response = db.query(JobResponse).join(Job).filter(JobResponse.worker_id == worker_id, Job.id == job_id).first()
+        job = db.query(Job).filter(Job.id == job_id).first()
+        if not job:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Работа не найдена')
+        
+        if job.status != Job_status.IN_SEARCH:
+            raise HTTPException("Заявка уже принята")
+        
+        if not response:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Заявка не найдена')
+        
+        db.delete(response)
+        db.commit()
+
+        return {"message": "Заявка успешно отозвана"}
     
 
     

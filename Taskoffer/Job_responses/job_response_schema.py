@@ -27,3 +27,8 @@ class CreateJobResponseSchema(BaseModel):
             raise ValueError("Сообщение не может быть пустым")
         
         return message
+    
+
+class DeleteJobResponseSchema(BaseModel):
+    job_id: int
+    
