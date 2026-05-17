@@ -1,9 +1,9 @@
 from logging.config import fileConfig
-from config.database import Base
-from entities.models import User, Wallet
+from Taskoffer.Core.config.database import Base
+from Taskoffer.Core.entities.models import User, Wallet
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
-from config.configuration import settings
+from Taskoffer.Core.config.configuration import settings
 from alembic import context
 
 # this is the Alembic Config object, which provides

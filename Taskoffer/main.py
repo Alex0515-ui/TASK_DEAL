@@ -1,18 +1,18 @@
 from fastapi import FastAPI
-from config.database import Base, engine
+from Core.config.database import Base, engine
 from tasks import scheduler
 from contextlib import asynccontextmanager
 import logging
 
-import auth.authentication as authentication
-import Jobs.jobs as job
-import Job_responses.jobs_responses as job_responses
-import Deals.deals as deals
-import Reviews.reviews as reviews
-import Messages.messages as messages
-import WebSocket.websocket as websocket
-import Notifications.notifications as nots
-import Payment.payment as payment
+import Core.auth.authentication as authentication
+import Business.Jobs.jobs as job
+import Business.Job_responses.jobs_responses as job_responses
+import Business.Deals.deals as deals
+import Interactions.Reviews.reviews as reviews
+import Interactions.Messages.messages as messages
+import Core.WebSocket.websocket as websocket
+import Interactions.Notifications.notifications as nots
+import Interactions.Payment.payment as payment
 
 
 logging.basicConfig(level=logging.INFO)
