@@ -34,7 +34,7 @@ class ConnectionManager:
             del self.active_connections[deal_id]
 
     # Трансляция
-    async def broadcast(self, deal_id: int, message: str, ):
+    async def broadcast(self, deal_id: int, message: dict):
         for connection in self.active_connections.get(deal_id, []):
             await connection.send_json(message)
 
@@ -86,12 +86,13 @@ async def websocket_endpoint(deal_id: int, websocket: WebSocket):
                 }
             )
 
+    except WebSocketDisconnect:
+        manager.disconnect(deal_id, websocket)
+
     except Exception as e:
         logger.error(f"ERROR: {e}")
         await websocket.close(1011)
-
-    except WebSocketDisconnect:
-        manager.disconnect(deal_id, websocket)
+    
 
     finally:
         db.close()

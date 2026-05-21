@@ -10,7 +10,6 @@ from Interactions.Payment.payment_service import process_job_payment, DealPaymen
 
 class DealService:
 
-
     # Создание сделки (Автоматическое платформой)
     @staticmethod
     def createDeal(job: Job, job_response: JobResponse, db: Session):
@@ -226,13 +225,14 @@ class DealService:
             
             deal.client_completed_at = now
             message = "Сделка успешно подписана! Для завершения осталось подписать работнику"
-            create_notification(
-                user_id=deal.worker_id, 
-                text=f"Клиент подписал договор по работе '{deal.job.title}'\nТеперь нужна подпись с вашей стороны для завершения работы",
-                type=NotificationType.JOB,
-                db=db,
-                related_id=deal.job.id
-            )
+            if deal.worker_completed_at is None:
+                create_notification(
+                    user_id=deal.worker_id, 
+                    text=f"Клиент подписал договор по работе '{deal.job.title}'\nТеперь нужна подпись с вашей стороны для завершения работы",
+                    type=NotificationType.JOB,
+                    db=db,
+                    related_id=deal.job.id
+                )
         
         elif user_id == deal.worker_id:
             if deal.worker_completed_at:
@@ -240,13 +240,14 @@ class DealService:
             
             deal.worker_completed_at = now
             message = "Сделка успешно подписана! Для завершения осталось подписать клиенту"
-            create_notification(
-                user_id=deal.client_id, 
-                text=f"Работник подписал договор по работе '{deal.job.title}'\nТеперь нужна подпись с вашей стороны для завершения работы",
-                type=NotificationType.JOB,
-                db=db,
-                related_id=deal.job.id
-            )
+            if deal.client_completed_at is None:
+                create_notification(
+                    user_id=deal.client_id, 
+                    text=f"Работник подписал договор по работе '{deal.job.title}'\nТеперь нужна подпись с вашей стороны для завершения работы",
+                    type=NotificationType.JOB,
+                    db=db,
+                    related_id=deal.job.id
+                )
         
         if deal.client_completed_at and deal.worker_completed_at:
             deal.status = DealStatus.COMPLETED

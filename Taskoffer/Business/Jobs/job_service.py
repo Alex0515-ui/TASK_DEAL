@@ -87,7 +87,16 @@ class JobService:
         if not job:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Задача не найдена или вы не являетесь ее владельцом')
         
+        if job.status == Job_status.CANCELLED:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='Работа уже отменена')
+        
+        if job.status == Job_status.DONE:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Работа уже завершена')
+        
         if job.worker_id is not None:
+            deal = db.query(Deal).filter(Deal.job_id == job_id).first()
+            deal.status = DealStatus.CANCELLED
+            
             create_notification(
                 user_id=job.worker_id,
                 text=f"Работа '{job.title}' была отменена со стороны клиента",
@@ -95,6 +104,7 @@ class JobService:
                 db=db,
                 related_id=job.id
             )
+            
         
         job.status = Job_status.CANCELLED
         job.worker_id = None

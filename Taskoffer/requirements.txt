@@ -13,3 +13,8 @@ email-validator
 phonenumbers
 apscheduler
 websockets
+pytest
+pytest-mock
+pytest-asyncio
+pytest-env
+httpx
