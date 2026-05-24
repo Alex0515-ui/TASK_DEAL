@@ -1,34 +1,42 @@
 import pytest
-from Core.config.database import Base
+from Core.config.database import Base, get_db
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 from sqlalchemy import create_engine
 from Core.entities.models import *
 from datetime import datetime, timedelta, timezone
+from Core.auth.authentication import hash_password
+from main import app
 import sys
 import os
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
+TEST_DB_URL = "sqlite:///:memory:"
+engine = create_engine(TEST_DB_URL, connect_args={"check_same_thread": False}, poolclass=StaticPool)
+TestingSessionLocal = sessionmaker(bind=engine, expire_on_commit=False)
+
 
 # ФЕЙК БД для тестов
-@pytest.fixture
+@pytest.fixture(scope="function")
 def db():
 
-    URL = "sqlite:///:memory:"
-
-    engine = create_engine(URL, connect_args={"check_same_thread": False})
-
-    session_local_test = sessionmaker(bind=engine, expire_on_commit=False)
-
     Base.metadata.create_all(bind=engine)
+    session = TestingSessionLocal()
+
+    def override_get_db():
+        try:
+            yield session
+        finally:
+            pass
     
-    session = session_local_test()
+    app.dependency_overrides[get_db] = override_get_db
 
     yield session
 
     session.close()
-
+    Base.metadata.drop_all(bind=engine)
+    app.dependency_overrides.clear()
 
 # Клиент для тестов
 @pytest.fixture
@@ -37,8 +45,8 @@ def client_user(db):
     client = User(
         name="Client",
         email="client@gmail.com",
-        password_hash="123",
-        phone_number="77474412518",
+        password_hash=hash_password("123"),
+        phone_number="+77474412518",
         role=Role.CLIENT    
     )
     db.add(client)

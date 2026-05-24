@@ -52,5 +52,4 @@ def get_me(user_id: int, db: Session):
         "rating" : user.rating,
         "completed_tasks" : user.completed_task,
         "registered_at": user.created_at
-
     }

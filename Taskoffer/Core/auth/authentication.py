@@ -24,7 +24,7 @@ oauth2_bearer = OAuth2PasswordBearer(tokenUrl='auth/token')
 @router.post("/register", status_code=status.HTTP_201_CREATED)
 async def create_user(db: Annotated[Session, Depends(get_db)], create_user_data: CreateUserSchema):
     
-    user_exists_email = db.query(User).filter(User.email == create_user_data.email, User.phone_number == create_user_data.phone_number).first()
+    user_exists_email = db.query(User).filter(User.email == create_user_data.email).first()
     if user_exists_email:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Пользователь с такой почтой уже существует')
         
