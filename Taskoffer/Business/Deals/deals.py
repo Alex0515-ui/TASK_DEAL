@@ -1,4 +1,5 @@
 from fastapi import APIRouter
+
 from Business.Deals.deals_service import DealService
 from Core.auth.authentication import user_dependency, db_dependency
 from Business.Deals.deal_schemas import ChangeDealSchema, CancelDealSchema

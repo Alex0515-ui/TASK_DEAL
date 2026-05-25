@@ -49,7 +49,7 @@ async def create_user(db: Annotated[Session, Depends(get_db)], create_user_data:
 
     return {"message": "Пользователь создался успешно!"}
 
-
+# Логин
 @router.post("/token", response_model=Token)
 async def login(data: LoginSchema, db: Annotated[Session, Depends(get_db)]):
     user = authenticate_user(email=data.email, password=data.password, db=db)
@@ -61,7 +61,7 @@ async def login(data: LoginSchema, db: Annotated[Session, Depends(get_db)]):
 
     return {"access_token": token, 'token_type': 'bearer'}
 
-
+# Получение пользователя для авторизации
 async def get_current_user(token: Annotated[str, Depends(oauth2_bearer)]):
     try:
         payload = jwt.decode(token, settings.JWT_SECRET_KEY, algorithms=[settings.ALGORITHM])

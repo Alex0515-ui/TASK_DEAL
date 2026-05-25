@@ -1,17 +1,20 @@
 from apscheduler.schedulers.background import BackgroundScheduler
-from Core.entities.models import *
+
 from datetime import datetime
 from sqlalchemy import update, func
-from Core.config.database import SessionLocal
-import logging
 from sqlalchemy.orm import Session
 from datetime import datetime, timezone
+import logging
+
+from Core.config.database import SessionLocal
+from Core.entities.models import *
 
 
 scheduler = BackgroundScheduler()
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
 
 # Авто закрытие работ если время размещения прошло
 def close_expired_jobs():

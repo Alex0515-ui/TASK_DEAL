@@ -8,7 +8,7 @@ from Interactions.Messages.message_schema import CreateMessage
 
 router = APIRouter(prefix="/messages")
 
-
+# НЕ ОБЯЗАТЕЛЬНЫЕ ENDPOINT-ы (ТК ПРИМЕНЯЮТСЯ В REAL-TIME ЧАТЕ)
 
 @router.post("/{deal_id}/create")
 def create_message(deal_id: int, user: user_dependency, message: CreateMessage, db: db_dependency):

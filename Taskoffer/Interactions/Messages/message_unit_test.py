@@ -1,5 +1,4 @@
 import pytest
-from pytest_mock import mocker
 from fastapi import HTTPException
 from Interactions.Messages.message_service import MessageService, CreateMessage
 from Core.entities.models import *
@@ -64,7 +63,7 @@ def test_mark_read_success(deal, db, client_user, worker_user):
 
 
 # Ошибка сделка не найдена
-def test_mark_read_success(db, client_user):
+def test_mark_read_deal_not_found_fail(db, client_user):
 
     with pytest.raises(HTTPException) as exc:
         MessageService.mark_as_read(deal_id=99999, user_id=client_user.id, db=db)
@@ -73,7 +72,7 @@ def test_mark_read_success(db, client_user):
 
 
 # Ошибка что не твоя сделка
-def test_mark_read_success(db, client_user, deal):
+def test_mark_read_not_yours_fail(db, client_user, deal):
 
     with pytest.raises(HTTPException) as exc:
         MessageService.mark_as_read(deal_id=deal.id, user_id=99999, db=db)

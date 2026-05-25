@@ -1,9 +1,10 @@
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
-from Core.entities.models import *
-from Business.Deals.deal_schemas import ChangeDealSchema, CancelDealSchema
 from sqlalchemy import select
 from datetime import datetime, timezone
+
+from Core.entities.models import *
+from Business.Deals.deal_schemas import ChangeDealSchema, CancelDealSchema
 from Interactions.Notifications.notification_service import create_notification
 from Interactions.Payment.payment_service import process_job_payment, DealPaymentAction
 

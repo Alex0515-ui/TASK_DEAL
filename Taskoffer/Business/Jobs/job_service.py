@@ -1,5 +1,7 @@
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
+from sqlalchemy import select
+
 from Core.entities.models import *
 from Business.Jobs.job_schemas import CreateJobSchema
 from Interactions.Notifications.notification_service import create_notification
@@ -83,7 +85,7 @@ class JobService:
     # Отмена задачи
     @staticmethod
     def cancel_job(job_id: int, owner_id: int, db: Session):
-        job = db.query(Job).filter(Job.id==job_id, Job.owner_id == owner_id).first()
+        job = db.execute(select(Job).where(Job.id==job_id, Job.owner_id == owner_id).with_for_update()).scalar_one_or_none()
         if not job:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Задача не найдена или вы не являетесь ее владельцом')
         

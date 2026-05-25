@@ -3,7 +3,7 @@ from datetime import datetime
 from typing import Optional
 from datetime import datetime, timezone
 
-
+# Валидация данных для отмены сделки
 class CancelDealSchema(BaseModel):
     reason: str = Field(min_length=5, max_length=1000)
 
@@ -14,6 +14,7 @@ class CancelDealSchema(BaseModel):
         
         return reason
 
+# Валидация данных для изменения сделки
 class ChangeDealSchema(BaseModel):
     agreed_price: Optional[int] = None
     deadline: Optional[datetime] = None

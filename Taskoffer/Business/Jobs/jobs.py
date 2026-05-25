@@ -1,10 +1,11 @@
 from fastapi import APIRouter
+from enum import Enum
 
 from Business.Jobs.job_service import JobService
 from Core.auth.authentication import db_dependency, user_dependency
 from Business.Jobs.job_schemas import CreateJobSchema
 from Core.entities.models import *
-from enum import Enum
+
 
 router = APIRouter(prefix="/jobs", tags=["Jobs"])
 

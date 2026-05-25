@@ -1,5 +1,4 @@
 from pwdlib import PasswordHash
-from fastapi import Depends
 from datetime import datetime, timedelta, timezone
 from jose import jwt
 from Core.entities.models import User

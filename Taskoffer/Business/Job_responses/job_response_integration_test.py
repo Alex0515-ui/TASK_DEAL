@@ -77,7 +77,7 @@ def test_accept_response_integ_success(db, client_user, job, worker_user):
 
 
 # Ошибка авторизации
-def test_accept_response_integ_success(db, client_user, job, worker_user):    
+def test_accept_response_integ_fail(db, client_user, job, worker_user):    
     job.status = Job_status.IN_SEARCH
     job.worker_id = None
     data = CreateJobResponseSchema(job_id=job.id)

@@ -164,7 +164,7 @@ def test_create_review_deal_not_found_fail(mocker, db, worker_user, client_user,
 
 
 # Ошибка что сделка не завершена
-def test_create_review_deal_not_found_fail(mocker, db, worker_user, client_user, deal):
+def test_create_review_deal_not_completed_fail(mocker, db, worker_user, client_user, deal):
     notification = mocker.patch("Interactions.Reviews.review_service.create_notification")
     rating_func = mocker.patch("Interactions.Reviews.review_service.ReviewService.rate_user")
 

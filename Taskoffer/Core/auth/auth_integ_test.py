@@ -8,10 +8,11 @@ from Core.entities.models import *
 
 client = TestClient(app)
 
-
 # ========================================================================
 # ====================== REGISTER TESTS ========================================
 # =========================================================================================
+
+
 # Успешная регистрация как клиент
 @pytest.mark.asyncio
 async def test_register_integ_user_success(db, client_user):

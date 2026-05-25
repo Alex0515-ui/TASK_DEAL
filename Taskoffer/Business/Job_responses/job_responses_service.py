@@ -1,8 +1,9 @@
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
+from sqlalchemy import select
+
 from Core.entities.models import *
 from Business.Job_responses.job_response_schema import CreateJobResponseSchema
-from sqlalchemy import select
 from Business.Deals.deals_service import DealService
 from Interactions.Notifications.notification_service import create_notification
 from tasks import check_daily_limit_responses
@@ -195,7 +196,7 @@ class JobResponseService:
     # Отклонение заявки работника
     @staticmethod
     def reject_response(db: Session, response_id: int, client_id: int):
-        response = db.query(JobResponse).filter(JobResponse.id == response_id).first()
+        response = db.execute(select(JobResponse).where(JobResponse.id == response_id).with_for_update()).scalar_one_or_none()
         if not response:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = 'Заявка не найдена')
         
@@ -228,7 +229,7 @@ class JobResponseService:
     # Отозвать заявку
     @staticmethod
     def delete_response(db: Session, response_id: int, worker_id: int, job_id: int):
-        response = db.query(JobResponse).join(Job).filter(JobResponse.worker_id == worker_id, Job.id == job_id).first()
+        response = db.execute(select(JobResponse).join(Job).where(JobResponse.worker_id == worker_id, Job.id == job_id).with_for_update()).scalar_one_or_none()
         job = db.query(Job).filter(Job.id == job_id).first()
         if not job:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Работа не найдена')

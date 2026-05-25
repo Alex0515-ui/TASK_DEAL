@@ -1,5 +1,6 @@
 from pydantic import BaseModel, field_validator
 
+# Простая валидация денег для кошелька
 class WalletSchema(BaseModel):
     amount: float 
 

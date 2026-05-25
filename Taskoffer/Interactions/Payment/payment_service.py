@@ -12,6 +12,7 @@ class DealPaymentAction(Enum):
     DEAL_CANCEL = "Отмена сделки"
     JOB_CANCEL = "Отмена работы"
 
+
 # Посмотреть свой кошелек
 def check_balance(user_id: int, db: Session):
     wallet = db.query(Wallet).filter(Wallet.user_id == user_id).first()

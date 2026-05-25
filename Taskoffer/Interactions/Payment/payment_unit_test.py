@@ -1,5 +1,4 @@
 import pytest
-from pytest_mock import mocker
 from Interactions.Payment.payment_schema import WalletSchema
 from Interactions.Payment.payment_service import *
 

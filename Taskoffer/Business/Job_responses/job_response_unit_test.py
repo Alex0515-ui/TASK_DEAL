@@ -1,10 +1,9 @@
 import pytest
 from pytest_mock import mocker
-from datetime import datetime, timezone, timedelta
 from fastapi import HTTPException
 
 from Core.entities.models import *
-from Business.Job_responses.job_response_schema import CreateJobResponseSchema, DeleteJobResponseSchema
+from Business.Job_responses.job_response_schema import CreateJobResponseSchema
 from Business.Job_responses.job_responses_service import JobResponseService
 
 # Успешное создание заявки на работу
