@@ -6,62 +6,62 @@
 [![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://docker.com)
 [![Tests](https://img.shields.io/badge/Tests-133-22C55E?style=for-the-badge&logo=pytest&logoColor=white)](https://pytest.org)
 
-Backend-платформа для быстрой физической работы: клиенты размещают бытовые задачи, работники подают заявки, клиент выбирает исполнителя — создаётся сделка. По завершении работы деньги поступают на кошелёк исполнителя, стороны оставляют отзывы.
+A backend platform for quick physical tasks: clients post jobs, workers submit applications, the client picks an executor — a deal is created. Once the job is done, funds are transferred to the worker's wallet and both sides leave reviews.
 
 ---
 
-## ⚙️ Стек
+## ⚙️ Stack
 
 | | |
 |---|---|
-| Фреймворк | FastAPI |
-| База данных | PostgreSQL 15 + SQLAlchemy + Alembic |
-| Аутентификация | JWT (python-jose), Argon2/bcrypt |
+| Framework | FastAPI |
+| Database | PostgreSQL 15 + SQLAlchemy + Alembic |
+| Authentication | JWT (python-jose), Argon2/bcrypt |
 | Real-time | WebSockets |
-| Планировщик | APScheduler |
-| Тесты | pytest + httpx |
+| Scheduler | APScheduler |
+| Tests | pytest + httpx |
 
 ---
 
-## 🗂️ Модули
+## 🗂️ Modules
 
 ```
 Taskoffer/
-├── auth/             # Регистрация, логин, JWT
-├── jobs/             # Задачи с двумя сроками (заявки / выполнение)
-├── job_responses/    # Заявки работников на задачи
-├── deals/            # Сделки: создаются при выборе исполнителя
-├── payment/          # Кошельки и переводы
-├── reviews/          # Отзывы после завершения сделки
-├── websocket/        # Real-time чат в рамках сделки
-├── messages/         # Сообщения WebSocket-сессии
-├── notifications/    # Системные уведомления платформы
-└── config/           # Настройки БД и окружения
+├── auth/             # Registration, login, JWT
+├── jobs/             # Jobs with two deadlines (applications / completion)
+├── job_responses/    # Worker applications for jobs
+├── deals/            # Deals: created when executor is chosen
+├── payment/          # Wallets and transfers
+├── reviews/          # Reviews after deal completion
+├── websocket/        # Real-time chat within a deal
+├── messages/         # WebSocket session messages
+├── notifications/    # Platform system notifications
+└── config/           # Database and environment settings
 ```
 
 ---
 
-## 🚀 Запуск
+## 🚀 Getting Started
 
 ```bash
 git clone https://github.com/Alex0515-ui/TASK_OFFER.git
 cd TASK_OFFER/Taskoffer
 
 cp .env.example .env
-# Заполните .env своими значениями
+# Fill in your values in .env
 
 docker-compose up --build
 ```
 
-После запуска:
+Once running:
 
-| Сервис | Адрес |
-|--------|-------|
+| Service | URL |
+|---------|-----|
 | API | http://localhost:8000 |
 | Swagger UI | http://localhost:8000/docs |
 | pgAdmin | http://localhost:8081 |
 
-Применить миграции:
+Apply migrations:
 
 ```bash
 docker-compose exec app alembic upgrade head
@@ -69,9 +69,9 @@ docker-compose exec app alembic upgrade head
 
 ---
 
-## 🗃️ Переменные окружения
+## 🗃️ Environment Variables
 
-Скопируйте `.env.example` в `.env`:
+Copy `.env.example` to `.env`:
 
 ```env
 DB_URL=postgresql://postgres:your_password@db:5432/TaskOffer
@@ -86,11 +86,11 @@ PGADMIN_DEFAULT_EMAIL=admin@example.com
 PGADMIN_DEFAULT_PASSWORD=your_pgadmin_password
 ```
 
-> ⚠️ Не коммитьте `.env` с реальными данными.
+> ⚠️ Never commit `.env` with real credentials.
 
 ---
 
-## 🧪 Тесты
+## 🧪 Tests
 
 ```bash
 cd Taskoffer
