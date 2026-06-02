@@ -24,6 +24,8 @@ jobs:
         echo "DB_URL=postgresql://test_user:test_password@db:5432/test_db" >> .env
         echo "PGADMIN_DEFAULT_EMAIL=admin@test.com" >> .env
         echo "PGADMIN_DEFAULT_PASSWORD=admin_password" >> .env
+        echo "JWT_SECRET_KEY=super_secret_test_key_1234567890" >> .env
+        echo "ALGORITHM=HS256" >> .env
     
     # Запуск
     - name: Start Docker services
