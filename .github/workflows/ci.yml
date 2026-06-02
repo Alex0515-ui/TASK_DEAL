@@ -2,9 +2,9 @@ name: Backend Docker Testing CI
 
 on: 
   push:
-    branches: [main]
+    branches: [main, fix]
   pull_request:
-    branches: [main]  
+    branches: [main, fix]  
 
 jobs:
   run-tests:
@@ -24,14 +24,25 @@ jobs:
         echo "DB_URL=postgresql://test_user:test_password@db:5432/test_db" >> .env
         echo "PGADMIN_DEFAULT_EMAIL=admin@test.com" >> .env
         echo "PGADMIN_DEFAULT_PASSWORD=admin_password" >> .env
+        echo "JWT_SECRET_KEY=super_secret_test_key_1234567890" >> .env
+        echo "ALGORITHM=HS256" >> .env
     
     # Запуск
-    - name: Start Docker services
+    - name: Start Database service
+      working-directory: ./Taskoffer
+      run: docker compose up -d db
+
+    - name: Wait for Database to be ready
+      run: sleep 10
+
+    - name: Start remaining docker services
       working-directory: ./Taskoffer
       run: docker compose up -d --build
 
-    - name: Wait for Database to be ready
-      run: sleep 20
+    # Проверяем логи
+    - name: Check app logs
+      working-directory: ./Taskoffer
+      run: docker compose logs app
 
     # Запуск тестов
     - name: Run tests inside Docker 
