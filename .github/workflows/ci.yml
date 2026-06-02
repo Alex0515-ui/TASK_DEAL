@@ -28,12 +28,16 @@ jobs:
         echo "ALGORITHM=HS256" >> .env
     
     # Запуск
-    - name: Start Docker services
+    - name: Start Database service
       working-directory: ./Taskoffer
-      run: docker compose up -d --build
+      run: docker compose up -d db
 
     - name: Wait for Database to be ready
       run: sleep 10
+
+    - name: Start remaining docker services
+      working-directory: ./Taskoffer
+      run: docker-compose up -d --build
 
     # Проверяем логи
     - name: Check app logs
