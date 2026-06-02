@@ -31,7 +31,12 @@ jobs:
       run: docker compose up -d --build
 
     - name: Wait for Database to be ready
-      run: sleep 20
+      run: sleep 10
+
+    # Проверяем логи
+    - name: Check app logs
+      working-directory: ./Taskoffer
+      run: docker compose logs app
 
     # Запуск тестов
     - name: Run tests inside Docker 
