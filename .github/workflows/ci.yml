@@ -37,7 +37,7 @@ jobs:
 
     - name: Start remaining docker services
       working-directory: ./Taskoffer
-      run: docker-compose up -d --build
+      run: docker compose up -d --build
 
     # Проверяем логи
     - name: Check app logs
