@@ -31,13 +31,13 @@ jobs:
       run: docker compose up -d --build
 
     - name: Wait for Database to be ready
-      run: sleep 5
+      run: sleep 20
 
     # Запуск тестов
     - name: Run tests inside Docker 
       working-directory: ./Taskoffer
       run: docker compose exec -T app python -m pytest
-      
+
     # Завершение с очисткой
     - name: Stop and clean containers
       if: always()
