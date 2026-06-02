@@ -2,9 +2,9 @@ name: Backend Docker Testing CI
 
 on: 
   push:
-    branches: [main]
+    branches: [main, fix]
   pull_request:
-    branches: [main]  
+    branches: [main, fix]  
 
 jobs:
   run-tests:
