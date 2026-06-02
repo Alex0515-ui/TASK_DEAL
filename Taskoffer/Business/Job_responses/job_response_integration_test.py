@@ -62,7 +62,8 @@ def test_accept_response_integ_success(db, client_user, job, worker_user):
     
     job.status = Job_status.IN_SEARCH
     job.worker_id = None
-    job_response = JobResponseService.create_bind_response(data={"job_id": job.id}, db=db, worker_id=worker_user.id)
+    data = CreateJobResponseSchema(job_id=job.id)
+    job_response = JobResponseService.create_bind_response(data=data, db=db, worker_id=worker_user.id)
     db.commit()
 
 

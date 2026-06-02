@@ -1,0 +1,45 @@
+name: Backend Docker Testing CI
+
+on: 
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]  
+
+jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out rep
+      uses: actions/checkout@v4
+
+    # Создаем фейковый .env
+    - name: Create .env file
+      working-directory: ./Taskoffer
+      run: |
+        echo "POSTGRES_USER=test_user" >> .env
+        echo "POSTGRES_PASSWORD=test_password" >> .env
+        echo "POSTGRES_DB=test_db" >> .env
+        echo "DB_URL=postgresql://test_user:test_password@db:5432/test_db" >> .env
+        echo "PGADMIN_DEFAULT_EMAIL=admin@test.com" >> .env
+        echo "PGADMIN_DEFAULT_PASSWORD=admin_password" >> .env
+    
+    # Запуск
+    - name: Start Docker services
+      working-directory: ./Taskoffer
+      run: docker compose up -d --build
+
+    - name: Wait for Database to be ready
+      run: sleep 5
+
+    # Запуск тестов
+    - name: Run tests inside Docker 
+      working-directory: ./Taskoffer
+      run: docker compose exec -T app python -m pytest
+      
+    # Завершение с очисткой
+    - name: Stop and clean containers
+      if: always()
+      working-directory: ./Taskoffer
+      run: docker compose down -v

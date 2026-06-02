@@ -72,6 +72,3 @@ def reject_job_response(id: int, db: db_dependency, user: user_dependency):
 @router.delete("/delete/{response_id}")
 def delete_job_response(response_id: int, data: DeleteJobResponseSchema,db: db_dependency, user: user_dependency):
     return JobResponseService.delete_response(db=db, response_id=response_id, worker_id=user['id'], job_id=data.job_id)
-
-
-

@@ -52,7 +52,7 @@ class JobResponseService:
     # Принятие заявки
     @staticmethod
     def accept_response(db: Session, response_id: int, client_id: int):
-            
+    
         try:
             response = db.execute(select(JobResponse).where(JobResponse.id == response_id).with_for_update()).scalar_one_or_none()
             if not response:

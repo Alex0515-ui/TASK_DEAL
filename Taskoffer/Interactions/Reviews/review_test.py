@@ -147,7 +147,7 @@ def test_create_review_change_success(mocker, db, worker_user, client_user, deal
 
 # Ошибка что сделка не найдена
 def test_create_review_deal_not_found_fail(mocker, db, worker_user, client_user, deal):
-    notification = mocker.patch("Interactions.Reviews.rreview_service.create_notification")
+    notification = mocker.patch("Interactions.Reviews.review_service.create_notification")
     rating_func = mocker.patch("Interactions.Reviews.review_service.ReviewService.rate_user")
 
     data = CreateReviewSchema(rating=4.0, comment="Just a test")
