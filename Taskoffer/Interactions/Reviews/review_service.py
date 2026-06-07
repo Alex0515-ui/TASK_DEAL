@@ -1,7 +1,12 @@
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
+
 from Interactions.Reviews.review_schema import CreateReviewSchema
-from Core.entities.models import *
+from Interactions.Reviews.review_models import Review
+from Interactions.Notifications.notification_models import NotificationType
+from Business.Deals.deal_models import Deal, DealStatus
+from Core.auth.user_models import User
+
 from datetime import datetime, timezone, timedelta
 from Interactions.Notifications.notification_service import create_notification
 

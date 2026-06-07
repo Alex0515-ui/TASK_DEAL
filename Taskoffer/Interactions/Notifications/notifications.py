@@ -1,9 +1,7 @@
 from fastapi import APIRouter
 
 from Core.auth.authentication import db_dependency, user_dependency
-from Core.entities.models import *
 from Interactions.Notifications.notification_service import *
-from Interactions.Notifications.notification_schema import CreateNotification
 
 
 router = APIRouter(prefix='/nots')

@@ -2,8 +2,8 @@ from fastapi.testclient import TestClient
 from datetime import datetime, timedelta, timezone
 from main import app
 from Core.auth.auth_methods import create_access_token
-from Core.entities.models import *
 from Business.Jobs.jobs import Modes
+from Business.Jobs.job_models import Job_type
 
 client = TestClient(app)
 

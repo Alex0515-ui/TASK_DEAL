@@ -31,4 +31,10 @@ class CreateJobResponseSchema(BaseModel):
 
 class DeleteJobResponseSchema(BaseModel):
     job_id: int
+
+    @field_validator('job_id')
+    def validate_id(cls, job_id):
+        if job_id < 1:
+            return ValueError("ID не может быть меньше 1")
+        return job_id
     

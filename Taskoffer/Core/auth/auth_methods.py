@@ -1,8 +1,9 @@
 from pwdlib import PasswordHash
 from datetime import datetime, timedelta, timezone
 from jose import jwt
-from Core.entities.models import User
 from Core.config.configuration import settings
+from Core.auth.user_models import User
+
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
 

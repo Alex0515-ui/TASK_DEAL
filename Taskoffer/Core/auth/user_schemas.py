@@ -1,5 +1,5 @@
 from pydantic import BaseModel, EmailStr, field_validator, Field
-from Core.entities.models import Role
+from Core.auth.user_models import Role
 import phonenumbers
 from typing import Optional
 
@@ -10,6 +10,7 @@ class CreateUserSchema(BaseModel):
     password_hash: str = Field(min_length=3, max_length=50)
     phone_number: str
     role: Optional[Role] = Role.CLIENT
+
 
     @field_validator('name')
     def validate_name(cls, name):
@@ -23,6 +24,7 @@ class CreateUserSchema(BaseModel):
             raise ValueError("Поле пароля не может быть пустым")
         return password
     
+    # Валидация номер телефона
     @field_validator('phone_number')
     def validate_phone_number(cls, number:str):
         try:

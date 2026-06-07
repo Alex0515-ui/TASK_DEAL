@@ -4,8 +4,7 @@ from enum import Enum
 from Business.Jobs.job_service import JobService
 from Core.auth.authentication import db_dependency, user_dependency
 from Business.Jobs.job_schemas import CreateJobSchema
-from Core.entities.models import *
-
+from Business.Jobs.job_models import Job, Job_type, Job_status
 
 router = APIRouter(prefix="/jobs", tags=["Jobs"])
 

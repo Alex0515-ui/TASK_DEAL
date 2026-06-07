@@ -6,9 +6,9 @@ import logging
 
 from Interactions.Messages.message_service import MessageService
 from Core.config.database import SessionLocal
-from Core.entities.models import *
 from Core.config.configuration import settings
 from Interactions.Messages.message_schema import CreateMessage
+from Business.Deals.deal_models import Deal
 
 logger = logging.getLogger(__name__)
 

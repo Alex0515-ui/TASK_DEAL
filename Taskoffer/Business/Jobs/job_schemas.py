@@ -1,7 +1,9 @@
 from pydantic import BaseModel, field_validator, Field
-from Core.entities.models import Job_type
+
 from datetime import datetime
 from datetime import datetime, timezone
+from Business.Jobs.job_models import Job_type
+
 
 # Валидация создания работы
 class CreateJobSchema(BaseModel):

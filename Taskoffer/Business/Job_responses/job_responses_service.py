@@ -2,8 +2,12 @@ from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 
-from Core.entities.models import *
 from Business.Job_responses.job_response_schema import CreateJobResponseSchema
+from Business.Job_responses.job_response_models import JobResponse, Response_status
+from Business.Jobs.job_models import Job, Job_status, Job_type
+from Interactions.Notifications.notification_models import NotificationType
+from Interactions.Payment.payment_models import Wallet, Transaction, TransactionType
+
 from Business.Deals.deals_service import DealService
 from Interactions.Notifications.notification_service import create_notification
 from tasks import check_daily_limit_responses

@@ -1,9 +1,10 @@
 import pytest
 from fastapi import HTTPException
 from pytest_mock import mocker
-from Core.entities.models import *
 from Business.Jobs.job_service import JobService
 from Business.Jobs.job_schemas import CreateJobSchema
+from Business.Jobs.job_models import Job_type, Job_status
+from Business.Deals.deal_models import DealStatus
 from datetime import datetime, timezone, timedelta
 
 

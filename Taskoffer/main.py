@@ -1,4 +1,7 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, status
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
+from datetime import datetime, timezone
 from Core.config.database import Base, engine
 from tasks import scheduler
 from contextlib import asynccontextmanager
@@ -45,6 +48,33 @@ app.include_router(nots.router)
 app.include_router(payment.router)
 
 Base.metadata.create_all(bind=engine)
+
+
+# Обработчик ошибок валидации
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    
+    errors = []
+    for error in exc.errors():
+        errors.append({
+            "field": " -> ".join(str(loc) for loc in error["loc"] if loc != "body"),
+            "issue": error["msg"]
+        })
+
+    response = {
+        "success": False,
+        "error": {
+            "code": "VALIDATION_ERROR",
+            "message": "Переданы неправильные данные",
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "details": errors
+        }
+    }
+
+    return JSONResponse(
+        status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+        content=response
+    )
 
 
 

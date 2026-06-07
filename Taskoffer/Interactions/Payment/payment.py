@@ -3,7 +3,7 @@ from fastapi import APIRouter
 from Interactions.Payment.payment_service import *
 from Core.auth.authentication import db_dependency, user_dependency
 from Interactions.Payment.payment_schema import WalletSchema
-from Core.entities.models import *
+
 
 router = APIRouter(prefix="/wallet")
 

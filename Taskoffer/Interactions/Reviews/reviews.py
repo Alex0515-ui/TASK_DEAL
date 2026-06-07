@@ -3,7 +3,7 @@ from fastapi import APIRouter
 from Interactions.Reviews.review_service import ReviewService
 from Core.auth.authentication import db_dependency, user_dependency
 from Interactions.Reviews.review_schema import CreateReviewSchema
-from Core.entities.models import *
+
 
 
 router = APIRouter(prefix="/reviews", tags=["Reviews"])

@@ -4,8 +4,9 @@ from sqlalchemy.orm import Session
 from sqlalchemy import update
 from datetime import datetime, timezone
 
-from Core.entities.models import *
 from Interactions.Messages.message_schema import CreateMessage
+from Interactions.Messages.message_models import Message
+from Business.Deals.deal_models import Deal, DealStatus
 
 class MessageService:
 

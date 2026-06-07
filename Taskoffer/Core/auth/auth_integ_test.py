@@ -4,7 +4,7 @@ from datetime import timedelta
 
 from main import app
 from Core.auth.authentication import create_access_token
-from Core.entities.models import *
+from Core.auth.user_models import Role
 
 client = TestClient(app)
 

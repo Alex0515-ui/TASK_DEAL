@@ -1,6 +1,9 @@
 from Business.Deals.deals_service import DealService
-from Core.entities.models import *
+from Business.Job_responses.job_response_models import JobResponse
+from Business.Deals.deal_models import Deal, DealStatus
 from Business.Deals.deal_schemas import ChangeDealSchema, CancelDealSchema
+from Business.Job_responses.job_response_models import Response_status
+
 from datetime import datetime, timedelta, timezone
 from pytest_mock import mocker
 import pytest

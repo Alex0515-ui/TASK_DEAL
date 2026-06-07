@@ -1,7 +1,7 @@
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 from sqlalchemy import select
-from Core.entities.models import *
+from Interactions.Payment.payment_models import *
 from Interactions.Payment.payment_schema import WalletSchema
 from enum import Enum
 

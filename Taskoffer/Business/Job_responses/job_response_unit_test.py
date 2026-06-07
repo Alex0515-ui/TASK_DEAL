@@ -2,8 +2,9 @@ import pytest
 from pytest_mock import mocker
 from fastapi import HTTPException
 
-from Core.entities.models import *
 from Business.Job_responses.job_response_schema import CreateJobResponseSchema
+from Business.Job_responses.job_response_models import JobResponse, Response_status
+from Business.Jobs.job_models import Job_status
 from Business.Job_responses.job_responses_service import JobResponseService
 
 # Успешное создание заявки на работу

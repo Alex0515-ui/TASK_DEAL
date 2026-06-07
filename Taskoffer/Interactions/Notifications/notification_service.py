@@ -1,6 +1,5 @@
-from Core.entities.models import Notification, NotificationType
 from sqlalchemy.orm import Session
-
+from Interactions.Notifications.notification_models import Notification, NotificationType
 
 # Создать уведомление от лица платформы 
 def create_notification(user_id: int, text: str, type: NotificationType, db: Session, related_id: int | None = None):

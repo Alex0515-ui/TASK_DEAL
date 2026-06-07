@@ -1,9 +1,14 @@
 import pytest
 from Core.config.database import Base, get_db
+from Core.auth.user_models import User, Role
+from Business.Jobs.job_models import Job, Job_status, Job_type
+from Business.Deals.deal_models import Deal, DealStatus
+from Business.Job_responses.job_response_models import JobResponse, Response_status
+from Interactions.Payment.payment_models import Wallet
+
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 from sqlalchemy import create_engine
-from Core.entities.models import *
 from datetime import datetime, timedelta, timezone
 from Core.auth.authentication import hash_password
 from main import app

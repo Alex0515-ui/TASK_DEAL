@@ -3,8 +3,8 @@ from fastapi import APIRouter
 from Core.auth.authentication import db_dependency, user_dependency
 from Business.Job_responses.job_response_schema import CreateJobResponseSchema, DeleteJobResponseSchema
 from Business.Job_responses.job_responses_service import JobResponseService
-from Core.entities.models import *
-
+from Business.Jobs.job_models import Job_type, Job_status
+from Business.Job_responses.job_response_models import Response_status
 
 router = APIRouter(prefix="/job_responses")
 

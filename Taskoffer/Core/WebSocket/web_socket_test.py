@@ -7,8 +7,7 @@ from websocket import WebSocketDisconnect
 from main import app
 from Core.auth.auth_methods import create_access_token
 from Core.config.database import get_db
-from Core.entities.models import *
-
+from Interactions.Messages.message_models import Message
 
 @pytest.fixture(autouse=True)
 def override_db(db):

@@ -4,7 +4,10 @@ from fastapi import HTTPException
 
 from Interactions.Reviews.review_service import ReviewService
 from Interactions.Reviews.review_schema import CreateReviewSchema
-from Core.entities.models import *
+from Interactions.Reviews.review_models import Review
+from Business.Jobs.job_models import Job, Job_type, Job_status
+from Business.Deals.deal_models import Deal, DealStatus
+
 from datetime import datetime, timezone, timedelta
 
 

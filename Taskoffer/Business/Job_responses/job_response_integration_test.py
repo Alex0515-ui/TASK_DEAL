@@ -2,7 +2,7 @@ from fastapi.testclient import TestClient
 from datetime import timedelta 
 from main import app
 from Core.auth.auth_methods import create_access_token
-from Core.entities.models import *
+from Business.Jobs.job_models import Job_status
 from Business.Job_responses.job_responses_service import JobResponseService
 from Business.Job_responses.job_response_schema import CreateJobResponseSchema
 

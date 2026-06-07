@@ -7,8 +7,8 @@ from datetime import datetime, timezone
 import logging
 
 from Core.config.database import SessionLocal
-from Core.entities.models import *
-
+from Business.Jobs.job_models import Job, Job_status
+from Business.Job_responses.job_response_models import JobResponse
 
 scheduler = BackgroundScheduler()
 

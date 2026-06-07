@@ -6,11 +6,12 @@ from jose import jwt, JWTError
 from typing import Annotated
 from sqlalchemy.orm import Session
 
-from Core.entities.models import User, Wallet
 from Core.config.configuration import settings
-from Core.entities.user_schemas import CreateUserSchema, Token, LoginSchema
+from Core.auth.user_schemas import CreateUserSchema, Token, LoginSchema
 from Core.config.database import get_db
 from Core.auth.auth_methods import *
+from Core.auth.user_models import User
+from Interactions.Payment.payment_models import Wallet
 
 router = APIRouter(prefix="/auth", tags=['auth'])
 

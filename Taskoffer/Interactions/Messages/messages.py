@@ -1,7 +1,6 @@
 from fastapi import APIRouter
 
 from Core.auth.authentication import db_dependency, user_dependency
-from Core.entities.models import *
 from Interactions.Messages.message_service import MessageService
 from Interactions.Messages.message_schema import CreateMessage
 

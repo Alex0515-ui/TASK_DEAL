@@ -3,8 +3,14 @@ from sqlalchemy.orm import Session
 from sqlalchemy import select
 from datetime import datetime, timezone
 
-from Core.entities.models import *
 from Business.Deals.deal_schemas import ChangeDealSchema, CancelDealSchema
+from Business.Jobs.job_models import Job
+from Business.Job_responses.job_response_models import JobResponse
+from Business.Deals.deal_models import Deal, DealStatus
+from Core.auth.user_models import User
+from Interactions.Payment.payment_models import Wallet, Transaction, TransactionType
+from Interactions.Notifications.notification_models import NotificationType
+
 from Interactions.Notifications.notification_service import create_notification
 from Interactions.Payment.payment_service import process_job_payment, DealPaymentAction
 

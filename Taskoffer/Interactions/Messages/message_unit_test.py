@@ -1,8 +1,8 @@
 import pytest
 from fastapi import HTTPException
 from Interactions.Messages.message_service import MessageService, CreateMessage
-from Core.entities.models import *
-
+from Interactions.Messages.message_models import Message
+from Business.Deals.deal_models import DealStatus
 # Успешная отправка сообщения
 def test_create_message_success(db, client_user, deal):
     message = CreateMessage(text="Hello")
